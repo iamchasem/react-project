@@ -1,67 +1,27 @@
-import { Component } from 'react';
-import "./global.css";
-import FilmsList from './components/filmsList.jsx';
+import "./App.css";
+import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { HomePage, FilmsPage, SingleFilmPage } from "./pages";
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      isLoaded: false,
-      list: [],
-    };
-
-    this.controller = new AbortController();
-  }
-
-  getData() {
-    fetch("https://studioghibliapi-d6fc8.web.app/people", {
-        signal: this.controller.signal
-    })
-    .then((response) => response.json())
-    .then((list) => this.setState({ list, isLoaded: true }))
-    .catch((error) => console.error(error))
-}
-
-
-  componentDidMount() {
-    console.log("App - mount");
-
-    this.getData()
-  }
-
-  componentDidUpdate() {
-    console.log("App - update");
-  }
-
-  componentWillUnmount() {
-    console.log("App - unmount");
-
-    if (process.env.NODE_ENV !== "development") this.controller.abort();
-  }
-
-  render() {
-    console.log("App - render");
-
-    if (!this.state.isLoaded) {
-      return <p>Loading...</p>
-    }
-
-    return(
-      <div className="App">
-        <div className="App-header"> 
-        <h1>Lifecycle Methods</h1>
-        <p>Loaded: {this.state.isLoaded.toString()}</p>
+function App(props) {
+  return (
+    <BrowserRouter>
+      <nav>
         <ul>
-          {this.state.list.map((item) => (
-          <li key={item.id}>{item.name}</li>
-          ))}
+          <li>
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="films">Films</NavLink>
+          </li>
         </ul>
-        <FilmsList />
-        </div>
-      </div>
-    );
-  }
+      </nav>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="films" element={<FilmsPage />} />
+        <Route path="films/:id" element={<SingleFilmPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
